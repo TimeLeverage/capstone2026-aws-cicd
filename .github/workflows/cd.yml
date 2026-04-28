@@ -80,13 +80,18 @@ jobs:
           username: ubuntu
           key:      ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # AWS 로그인 (EC2에 IAM 역할 필요)
-            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+            # AWS 로그인
+                    aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+                    
+                    cd ~/capstone2026
+            
+            # .env 파일 동적 생성 (기존 변수들을 EC2에 전달)
+                    echo "ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com" > .env
+                    echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+                    echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             
             # 최신 이미지 pull & 재시작
-            cd ~/capstone2026
-            docker-compose pull
-            docker-compose up -d
-            
-            # 사용하지 않는 이미지 정리
-            docker image prune -f
+                    docker-compose pull
+                    docker-compose up -d
+                    
+                    docker image prune -f
