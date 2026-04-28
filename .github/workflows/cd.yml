@@ -91,7 +91,7 @@ jobs:
                     echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             
             # 최신 이미지 pull & 재시작
-                    docker-compose pull
-                    docker-compose up -d
+                    docker compose pull
+                    docker compose up -d
                     
                     docker image prune -f
