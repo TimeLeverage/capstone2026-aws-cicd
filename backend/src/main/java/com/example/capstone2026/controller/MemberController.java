@@ -12,7 +12,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:63342") // 리액트 서버 포트 허용_____
 public class MemberController {
 
     private final MemberRepository memberRepository;
