@@ -30,4 +30,6 @@ spring:
     activate:
       on-profile: docker
   datasource:
-    url: jdbc:mariadb://db:3306/user_db
+    url: jdbc:mariadb://capstone2026-db.cf4eyy80ot15.ap-northeast-2.rds.amazonaws.com:3306/user_db
+    username: ${DB_USERNAME}    # 환경변수로 주입
+    password: ${DB_PASSWORD}    # 환경변수로 주입
