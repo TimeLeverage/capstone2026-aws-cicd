@@ -1,39 +1,24 @@
-services:
-  # 1. 데이터베이스 (MariaDB)
-  db:
-    image: mariadb:latest
-    container_name: yj-db
-    restart: always
-    environment:
-      MARIADB_ROOT_PASSWORD: "1234"
-      MARIADB_DATABASE: user_db
-    ports:
-      - "3316:3306"
-    # ✅ 추가: healthcheck로 DB 준비 완료 감지
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+# services:
+  # 1. 데이터베이스 (MariaDB) : docker image 설정 제거
+  # RDS사용
 
-  # 2. 백엔드 (Spring Boot)
+  # 2. 백엔드 (Spring Boot) : ECR 활용 설정
+services:
   backend:
-    build: ./backend          # ✅ 소스코드로 빌드
+    build: ./backend  # 이 줄이 있어야 'build' 명령어가 동작합니다.
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/yj-backend:latest
     container_name: yj-backend
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - DB_USERNAME=${DB_USERNAME}    # EC2 환경변수에서 주입
+      - DB_PASSWORD=${DB_PASSWORD}    # EC2 환경변수에서 주입
     ports:
       - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
 
-  # 3. 프론트엔드 (React)
+  # 3. 프론트엔드 (React) : ECR 활용 설정
   frontend:
-    build: ./frontend         # ✅ 소스코드로 빌드
+    build: ./frontend  # 이 줄을 추가해야 로컬에서 이미지를 빌드합니다.
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/yj-frontend:latest
     container_name: yj-frontend
     ports:
       - "63342:80"
-    depends_on:
-      - backend
