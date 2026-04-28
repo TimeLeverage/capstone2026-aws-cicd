@@ -91,7 +91,16 @@ jobs:
                     echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             
             # 최신 이미지 pull & 재시작
-                    docker compose pull
-                    docker compose up -d
-                    
-                    docker image prune -f
+            
+            cd ~/capstone2026
+            
+            # 1. 기존 컨테이너와 네트워크를 완전히 정지 및 제거 (안전한 배포를 위해 추가)
+            docker compose down
+            
+            # 2. 최신 이미지 pull
+            docker compose pull
+            
+            # 3. 컨테이너 재시작
+            docker compose up -d
+            
+            docker image prune -f
